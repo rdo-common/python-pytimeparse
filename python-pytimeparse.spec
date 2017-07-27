@@ -10,7 +10,7 @@
 
 Name:           python-pytimeparse
 Version:        1.1.5
-Release:        8%{?dist}
+Release:        9%{?dist}
 Summary:        Python time expression parse library
 License:        MIT
 URL:            https://github.com/wroberts/pytimeparse
@@ -78,6 +78,9 @@ grep -ilrx build -e '#!/usr/bin/env python' --include '*.py'| xargs sed -i '1s\^
 
 
 %changelog
+* Thu Jul 27 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.1.5-9
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
+
 * Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.1.5-8
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
