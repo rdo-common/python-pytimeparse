@@ -10,7 +10,7 @@
 
 Name:           python-pytimeparse
 Version:        1.1.5
-Release:        10%{?dist}
+Release:        11%{?dist}
 Summary:        Python time expression parse library
 License:        MIT
 URL:            https://github.com/wroberts/pytimeparse
@@ -21,7 +21,7 @@ BuildArch:      noarch
 Summary:        Python time expression parse library
 %{?python_provide:%python_provide python2-pytimeparse}
 
-BuildRequires:    python-setuptools
+BuildRequires:    python2-setuptools
 BuildRequires:    python2-devel
 
 %description -n python2-%{pypi_name}
@@ -78,6 +78,10 @@ grep -ilrx build -e '#!/usr/bin/env python' --include '*.py'| xargs sed -i '1s\^
 
 
 %changelog
+* Fri Feb 09 2018 Iryna Shcherbina <ishcherb@redhat.com> - 1.1.5-11
+- Update Python 2 dependency declarations to new packaging standards
+  (See https://fedoraproject.org/wiki/FinalizingFedoraSwitchtoPython3)
+
 * Fri Feb 09 2018 Fedora Release Engineering <releng@fedoraproject.org> - 1.1.5-10
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
 
