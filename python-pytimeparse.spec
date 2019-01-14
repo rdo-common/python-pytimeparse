@@ -1,33 +1,14 @@
-%{!?python2_shortver: %global python2_shortver %(%{__python2} -c 'import sys; print(str(sys.version_info.major) + "." + str(sys.version_info.minor))')}
-%{!?python3_shortver: %global python3_shortver %(%{__python3} -c 'import sys; print(str(sys.version_info.major) + "." + str(sys.version_info.minor))')}
-
 %global pypi_name pytimeparse
-
-%if 0%{?fedora} >= 24
-%global with_python3 1
-%endif
-
 
 Name:           python-pytimeparse
 Version:        1.1.5
-Release:        13%{?dist}
+Release:        14%{?dist}
 Summary:        Python time expression parse library
 License:        MIT
 URL:            https://github.com/wroberts/pytimeparse
 Source0:        https://pypi.python.org/packages/source/p/%{pypi_name}/%{pypi_name}-%{version}.tar.gz
 BuildArch:      noarch
 
-%package -n python2-%{pypi_name}
-Summary:        Python time expression parse library
-%{?python_provide:%python_provide python2-pytimeparse}
-
-BuildRequires:    python2-setuptools
-BuildRequires:    python2-devel
-
-%description -n python2-%{pypi_name}
-A small Python library to parse various kinds of time expressions
-
-%if 0%{?with_python3}
 %package -n python3-%{pypi_name}
 
 Summary:        Python time expression parse library
@@ -39,7 +20,6 @@ BuildRequires:    python3-devel
 %description -n python3-%{pypi_name}
 A small Python library to parse various kinds of time expressions
 
-%endif
 
 %description
 A small Python library to parse various kinds of time expressions
@@ -48,36 +28,25 @@ A small Python library to parse various kinds of time expressions
 %setup -q -n %{pypi_name}-%{version}
 
 %build
-%py2_build
-
-%if 0%{?with_python3}
 %py3_build
-%endif
-
 
 # Find all *.py files with the exact line '#!/usr/bin/env python' and for each
 # such file replace the line with nothing (if it's the 1st line).
 grep -ilrx build -e '#!/usr/bin/env python' --include '*.py'| xargs sed -i '1s\^#!/usr/bin/env python$\\'
 
 %install
-%if 0%{?with_python3}
 %py3_install
-%endif
 
-%{__python2} setup.py install --skip-build --root %{buildroot}
-
-%files -n python2-%{pypi_name}
-%doc README.rst
-%{python2_sitelib}/*
-
-%if 0%{?with_python3}
 %files -n python3-%{pypi_name}
 %doc README.rst
 %{python3_sitelib}/*
-%endif
 
 
 %changelog
+* Mon Jan 14 2019 Miro Hrončok <mhroncok@redhat.com> - 1.1.5-14
+- Subpackage python2-pytimeparse has been removed
+  See https://fedoraproject.org/wiki/Changes/Mass_Python_2_Package_Removal
+
 * Sat Jul 14 2018 Fedora Release Engineering <releng@fedoraproject.org> - 1.1.5-13
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 
