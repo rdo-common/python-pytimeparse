@@ -1,48 +1,119 @@
 %global pypi_name pytimeparse
 
-Name:           python-pytimeparse
-Version:        1.1.5
-Release:        15%{?dist}
-Summary:        Python time expression parse library
+%if 0%{?fedora}
+%bcond_without python3
+%else
+%bcond_with python3
+%endif
+
+%if 0%{?fedora} && 0%{?fedora} >= 30
+%bcond_with python2
+%else
+%bcond_without python2
+%endif
+
+Name:           python-%{pypi_name}
+Version:        1.1.8
+Release:        1%{?dist}
+Summary:        Time expression parser
+
 License:        MIT
-URL:            https://github.com/wroberts/pytimeparse
-Source0:        https://pypi.python.org/packages/source/p/%{pypi_name}/%{pypi_name}-%{version}.tar.gz
+URL:            https://github.com/wroberts/%{pypi_name}
+Source0:        %{pypi_source}
 BuildArch:      noarch
 
-%package -n python3-%{pypi_name}
+%if %{with python2}
+BuildRequires:  python2-devel
+BuildRequires:  python2-nose
+BuildRequires:  python2-setuptools
+%endif
 
-Summary:        Python time expression parse library
-%{?python_provide:%python_provide python3-pytimeparse}
-
-BuildRequires:    python3-setuptools
-BuildRequires:    python3-devel
-
-%description -n python3-%{pypi_name}
-A small Python library to parse various kinds of time expressions
-
+%if %{with python3}
+BuildRequires:  python3-devel
+BuildRequires:  python3dist(nose)
+BuildRequires:  python3dist(setuptools)
+%endif
 
 %description
-A small Python library to parse various kinds of time expressions
+A small Python module to parse various kinds of time expressions.
+
+%if %{with python2}
+%package -n     python2-%{pypi_name}
+Summary:        %{summary}
+%{?python_provide:%python_provide python2-%{pypi_name}}
+
+%description -n python2-%{pypi_name}
+A small Python module to parse various kinds of time expressions.
+
+This is the Python 2 version of the package.
+%endif
+
+%if %{with python3}
+%package -n     python3-%{pypi_name}
+Summary:        %{summary}
+%{?python_provide:%python_provide python3-%{pypi_name}}
+
+%description -n python3-%{pypi_name}
+A small Python module to parse various kinds of time expressions.
+
+This is the Python 3 version of the package.
+%endif
 
 %prep
-%setup -q -n %{pypi_name}-%{version}
+%autosetup -n %{pypi_name}-%{version}
+# Remove bundled egg-info
+rm -rf %{pypi_name}.egg-info
+
+# Remove shebangs from Python scripts
+find . -name '*.py' -exec sed -i '1 { /^#!/ d }' {} \+
 
 %build
-%py3_build
+%if %{with python2}
+%py2_build
+%endif
 
-# Find all *.py files with the exact line '#!/usr/bin/env python' and for each
-# such file replace the line with nothing (if it's the 1st line).
-grep -ilrx build -e '#!/usr/bin/env python' --include '*.py'| xargs sed -i '1s\^#!/usr/bin/env python$\\'
+%if %{with python3}
+%py3_build
+%endif
 
 %install
+%if %{with python2}
+%py2_install
+%endif
+
+%if %{with python3}
 %py3_install
+%endif
 
-%files -n python3-%{pypi_name}
+%check
+%if %{with python2}
+%{__python2} setup.py test
+%endif
+
+%if %{with python3}
+%{__python3} setup.py test
+%endif
+
+%if %{with python2}
+%files -n python2-%{pypi_name}
+%license LICENSE.rst
 %doc README.rst
-%{python3_sitelib}/*
+%{python2_sitelib}/%{pypi_name}
+%{python2_sitelib}/%{pypi_name}-%{version}-py?.?.egg-info
+%endif
 
+%if %{with python3}
+%files -n python3-%{pypi_name}
+%license LICENSE.rst
+%doc README.rst
+%{python3_sitelib}/%{pypi_name}
+%{python3_sitelib}/%{pypi_name}-%{version}-py?.?.egg-info
+%endif
 
 %changelog
+* Mon Mar 11 2019 Eli Young <elyscape@gmail.com> - 1.1.8-1
+- Update to 1.1.8
+
 * Sat Feb 02 2019 Fedora Release Engineering <releng@fedoraproject.org> - 1.1.5-15
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
