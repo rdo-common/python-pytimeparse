@@ -1,12 +1,13 @@
+%{?python_enable_dependency_generator}
 %global pypi_name pytimeparse
 
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} > 7
 %bcond_without python3
 %else
 %bcond_with python3
 %endif
 
-%if 0%{?fedora} && 0%{?fedora} >= 30
+%if 0%{?fedora} >= 30 || 0%{?rhel} > 7
 %bcond_with python2
 %else
 %bcond_without python2
